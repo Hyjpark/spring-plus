@@ -18,6 +18,10 @@ public class UserAdminService {
     @Transactional
     public void changeUserRole(long userId, UserRoleChangeRequest userRoleChangeRequest) {
         User user = userRepository.findById(userId).orElseThrow(() -> new InvalidRequestException("User not found"));
-        user.updateRole(UserRole.of(userRoleChangeRequest.getRole()));
+
+        String role = userRoleChangeRequest.getRole();
+        String roleWithPrefix = role.startsWith("ROLE_") ? role : "ROLE_" + role;
+
+        user.updateRole(UserRole.of(roleWithPrefix));
     }
 }

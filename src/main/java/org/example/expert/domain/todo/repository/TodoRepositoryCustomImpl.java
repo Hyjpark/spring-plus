@@ -40,7 +40,12 @@ public class TodoRepositoryCustomImpl implements TodoRepositoryCustom {
     @Override
     public Page<TodoSearchResponse> searchTodos(Pageable pageable, String title, String nickname, LocalDate startDate, LocalDate endDate) {
 
-        if (title == null && nickname == null && startDate == null && endDate == null) {
+        boolean hasSearchCondition = (title != null && !title.isBlank())
+                || (nickname != null && !nickname.isBlank())
+                || startDate != null
+                || endDate != null;
+
+        if (!hasSearchCondition) {
             return new PageImpl<>(Collections.emptyList(), pageable, 0);
         }
 

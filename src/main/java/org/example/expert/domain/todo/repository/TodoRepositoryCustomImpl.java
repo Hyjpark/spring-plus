@@ -82,14 +82,20 @@ public class TodoRepositoryCustomImpl implements TodoRepositoryCustom {
     }
 
     private BooleanExpression betweenDate(LocalDate startDate, LocalDate endDate) {
-        if (startDate != null && endDate != null) {
-            BooleanExpression isGoeStartDate = todo.createdAt.goe(LocalDateTime.of(startDate, LocalTime.MIN));
-            BooleanExpression isLoeEndDate = todo.createdAt.loe(LocalDateTime.of(endDate, LocalTime.MAX).withNano(0));
+        BooleanExpression condition = null;
 
-
-            return Expressions.allOf(isGoeStartDate, isLoeEndDate);
+        if (startDate != null) {
+            LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+            condition = todo.createdAt.goe(startDateTime);
         }
 
-        return null;
+        if (endDate != null) {
+            LocalDateTime endDateTime = LocalDateTime.of(endDate, LocalTime.MAX).withNano(0);
+            BooleanExpression endCondition = todo.createdAt.loe(endDateTime);
+
+            condition = (condition != null) ? condition.and(endCondition) : endCondition;
+        }
+
+        return condition;
     }
 }
